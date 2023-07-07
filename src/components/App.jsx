@@ -3,59 +3,61 @@ import { Statistics } from './Statistics/Statistics';
 import { FeedbackOptions } from './Feedbackoptions/FeedbackOptions';
 import { Section } from './Section/Section';
 
-export class App extends React.Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export const App = () => {
+  const [state, setState] = React.useState({
+    stats: {
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    },
+  });
 
+const onLeaveFeedback = type => {
+  setState(prevState => ({
+    stats: {
+      ...prevState.stats,
+      [type]: prevState.stats[type] + 1,
+    },
+  }));
+};
+  const  countTotal = () => {
+   
+    return state.stats.good + state.stats.neutral + state.stats.bad;
   };
-  onLeaveFeedback = type => {
-    this.setState(prevState => ({
-      [type]: prevState[type] + 1,
-    }));
-  };
-  countTotal = () => {
-    const { good, neutral, bad } = this.state;
-    return good + neutral + bad;
-  };
-  countPositiveFeedbackPercentage = () => {
-    return Math.round((this.state.good / this.countTotal()) * 100);
+  const countPositiveFeedbackPercentage = () => {
+    return Math.round((state.stats.good / countTotal()) * 100);
   };
 
-  render() {
-    const { good, neutral, bad } = this.state;
-    const positivePercentage = this.countPositiveFeedbackPercentage();
-    const total = this.countTotal();
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-        }}
-      >
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            onLeaveFeedback={this.onLeaveFeedback}
-            options={Object.keys(this.state)}
+
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      <Section title="Please leave feedback">
+        <FeedbackOptions
+          onLeaveFeedback={onLeaveFeedback}
+          options={Object.keys(state.stats)}
+        />
+      </Section>
+      <Section title="Statistics">
+        {countTotal() === 0 ? (
+          'There is no feedback'
+        ) : (
+          <Statistics
+            good={state.stats.good}
+            neutral={state.stats.neutral}
+            bad={state.stats.bad}
+            total={countTotal()}
+            positivePercentage={countPositiveFeedbackPercentage()}
           />
-        </Section>
-        <Section title="Statistics">
-          {this.state.total === 0 ? (
-            'There is no feedback'
-          ) : (
-            <Statistics
-              good={good}
-              neutral={neutral}
-              bad={bad}
-              total={total}
-              positivePercentage={positivePercentage}
-            />
-          )}
-        </Section>
-      </div>
-    );
-  }
-}
+        )}
+      </Section>
+    </div>
+  );
+};
