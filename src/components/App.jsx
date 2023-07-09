@@ -5,27 +5,27 @@ import { Section } from './Section/Section';
 
 export const App = () => {
   const [state, setState] = React.useState({
-    stats: {
+    
       good: 0,
       neutral: 0,
       bad: 0,
     },
-  });
+  );
 
 const onLeaveFeedback = type => {
   setState(prevState => ({
-    stats: {
-      ...prevState.stats,
-      [type]: prevState.stats[type] + 1,
-    },
+    
+      ...prevState,
+      [type]: prevState[type] + 1,
+    
   }));
 };
   const  countTotal = () => {
    
-    return state.stats.good + state.stats.neutral + state.stats.bad;
+    return state.good + state.neutral + state.bad;
   };
   const countPositiveFeedbackPercentage = () => {
-    return Math.round((state.stats.good / countTotal()) * 100);
+    return Math.round((state.good / countTotal()) * 100);
   };
 
 
@@ -42,7 +42,7 @@ const onLeaveFeedback = type => {
       <Section title="Please leave feedback">
         <FeedbackOptions
           onLeaveFeedback={onLeaveFeedback}
-          options={Object.keys(state.stats)}
+          options={Object.keys(state)}
         />
       </Section>
       <Section title="Statistics">
@@ -50,9 +50,9 @@ const onLeaveFeedback = type => {
           'There is no feedback'
         ) : (
           <Statistics
-            good={state.stats.good}
-            neutral={state.stats.neutral}
-            bad={state.stats.bad}
+            good={state.good}
+            neutral={state.neutral}
+            bad={state.bad}
             total={countTotal()}
             positivePercentage={countPositiveFeedbackPercentage()}
           />
